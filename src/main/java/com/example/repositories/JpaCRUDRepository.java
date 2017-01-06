@@ -4,9 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,12 +14,11 @@ import java.util.List;
 /**
  * Created by monju on 06-Jan-17.
  */
-@Repository
 @Transactional
-public abstract class JpaCRUDRepository <T, I>{
+public abstract class JpaCRUDRepository <T, I> implements CRUDRepository {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    public EntityManager entityManager;
 
     @Autowired
     private Environment env;
@@ -34,6 +31,7 @@ public abstract class JpaCRUDRepository <T, I>{
     private int batchSize = Integer.parseInt(env.getProperty("hibernate.jdbc.batch_size"));
 
 
+    @Override
     public <T> void create(T o){
         entityManager.persist(o);
     }
@@ -42,6 +40,7 @@ public abstract class JpaCRUDRepository <T, I>{
         session.saveOrUpdate(o);
     }
 
+    @Override
     public <T> void createOrUpdate(List<T> o){
         int i=0;
         for(T t: o){
@@ -54,6 +53,7 @@ public abstract class JpaCRUDRepository <T, I>{
         }
     }
 
+    @Override
     public <T> void delete(List<T> o){
         int i=0;
         for(T t: o){
@@ -66,17 +66,19 @@ public abstract class JpaCRUDRepository <T, I>{
         }
     }
 
-    public <T> void delete(T t){
-        if(entityManager.contains(t)){
-            entityManager.remove(t);
+    @Override
+    public <T> void delete(T o){
+        if(entityManager.contains(o)){
+            entityManager.remove(o);
         }
         else{
-            entityManager.remove(entityManager.merge(t));
+            entityManager.remove(entityManager.merge(o));
         }
     }
 
-    public <T> void update(T t){
-        entityManager.merge(t);
+    @Override
+    public <T> void update(T o){
+        entityManager.merge(o);
     }
 
 
