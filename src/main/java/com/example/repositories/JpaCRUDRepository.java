@@ -2,6 +2,7 @@ package com.example.repositories;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -14,72 +15,95 @@ import java.util.List;
 /**
  * Created by monju on 06-Jan-17.
  */
+
 @Transactional
-public abstract class JpaCRUDRepository <T, I> implements CRUDRepository {
+public abstract class JpaCRUDRepository <T, I>  {
 
     @PersistenceContext
-    public EntityManager entityManager;
+    EntityManager entityManager;
+
+/*
+    Session session = entityManager.unwrap( Session.class );
+    SessionImplementor sessionImplementor = entityManager.unwrap( SessionImplementor.class );
+
+    SessionFactory sessionFactory = entityManager.getEntityManagerFactory().unwrap( SessionFactory.class );*/
+
+   //Session session = entityManager.unwrap(Session.class);
+
+    Session getSession(){
+        return  entityManager.unwrap( Session.class );
+    }
+
+    SessionFactory getSessionFactory(){
+        return entityManager.getEntityManagerFactory().unwrap( SessionFactory.class );
+    }
+
+
+
 
     @Autowired
     private Environment env;
 
-    Session session = entityManager.unwrap( Session.class );
-    SessionImplementor sessionImplementor = entityManager.unwrap( SessionImplementor.class );
-
-    SessionFactory sessionFactory = entityManager.getEntityManagerFactory().unwrap( SessionFactory.class );
-
-    private int batchSize = Integer.parseInt(env.getProperty("hibernate.jdbc.batch_size"));
 
 
-    @Override
+    private int batchSize = 20;
+
+
+    
     public <T> void create(T o){
         entityManager.persist(o);
     }
 
     private <T> void createOrUpdate(T o){
-        session.saveOrUpdate(o);
+        entityManager.merge(o);
     }
 
-    @Override
+    
     public <T> void createOrUpdate(List<T> o){
         int i=0;
         for(T t: o){
-            session.saveOrUpdate(t);
+            entityManager.merge(o);
             ++i;
             if(i% batchSize==0){
-                session.flush();
-                session.clear();
+                entityManager.flush();
+                entityManager.clear();
             }
         }
     }
 
-    @Override
+    
     public <T> void delete(List<T> o){
         int i=0;
         for(T t: o){
-            session.delete(o);
+            entityManager.remove(o);
             ++i;
             if(i%batchSize==0){
-                session.flush();
-                session.clear();
+                entityManager.flush();
+                entityManager.clear();
             }
         }
     }
 
-    @Override
+    
     public <T> void delete(T o){
         if(entityManager.contains(o)){
             entityManager.remove(o);
         }
         else{
-            entityManager.remove(entityManager.merge(o));
+            entityManager.remove(o);
         }
     }
 
-    @Override
+    
     public <T> void update(T o){
-        entityManager.merge(o);
+        entityManager.remove(o);
     }
 
+    public Long getDataSize(T t){
+        return (Long) getSession().createCriteria(t.getClass()).setProjection(Projections.rowCount()).uniqueResult();
+    }
 
+    public <T> void getParentClassInfo(T t){
+        System.out.println(t.getClass());
+    }
 }

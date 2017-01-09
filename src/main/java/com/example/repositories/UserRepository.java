@@ -1,6 +1,8 @@
 package com.example.repositories;
 
 import com.example.models.User;
+
+import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
@@ -26,4 +28,14 @@ public class UserRepository extends JpaCRUDRepository<User, Integer>{
         User mUser = (User)query.getSingleResult();
         return mUser;
     }
+
+    public boolean containsUser(final User pUser){
+        return getSession().contains(pUser);
+    }
+    
+    public Number getUserDataSize(){
+    	return (Number) getSession().createCriteria(User.class).setProjection(Projections.rowCount()).uniqueResult();
+    }
+
+
 }
