@@ -1,4 +1,4 @@
-package com.example.repositories;
+package com.example.repositories.impl;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,6 +9,8 @@ import org.springframework.core.env.Environment;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -20,7 +22,7 @@ import java.util.List;
 public abstract class JpaCRUDRepository <T, I>  {
 
     @PersistenceContext
-    EntityManager entityManager;
+    public EntityManager entityManager;
 
 /*
     Session session = entityManager.unwrap( Session.class );
@@ -30,11 +32,11 @@ public abstract class JpaCRUDRepository <T, I>  {
 
    //Session session = entityManager.unwrap(Session.class);
 
-    Session getSession(){
+    public Session getSession(){
         return  entityManager.unwrap( Session.class );
     }
 
-    SessionFactory getSessionFactory(){
+    public SessionFactory getSessionFactory(){
         return entityManager.getEntityManagerFactory().unwrap( SessionFactory.class );
     }
 
@@ -106,4 +108,6 @@ public abstract class JpaCRUDRepository <T, I>  {
     public <T> void getParentClassInfo(T t){
         System.out.println(t.getClass());
     }
+
+
 }

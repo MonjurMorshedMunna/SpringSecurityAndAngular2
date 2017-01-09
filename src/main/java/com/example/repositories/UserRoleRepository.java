@@ -1,12 +1,9 @@
 package com.example.repositories;
 
-import com.example.models.UserRole;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * Created by monju on 06-Jan-17.
+ * Created by monju on 09-Jan-17.
  */
-@Repository
-public class UserRoleRepository extends JpaCRUDRepository<UserRole, Integer> {
-
+public interface UserRoleRepository extends CrudRepository {
 }
