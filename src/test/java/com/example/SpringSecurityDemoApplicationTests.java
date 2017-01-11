@@ -11,22 +11,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class SpringSecurityDemoApplicationTests {
 
-    @Autowired
-    UserRepository userRepository;
-
-
 
 	@Test
 	public void contextLoads() {
 
 	}
-
-
-
-	@Test
-	public void databaseTest(){
-        System.out.println("User name:"+ userRepository.getUser("monjurmorshed794").getUserName());
-    }
 
 
 
