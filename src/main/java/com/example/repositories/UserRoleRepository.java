@@ -2,14 +2,15 @@ package com.example.repositories;
 
 import com.example.models.User;
 import com.example.models.UserRole;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.List;
+import java.util.Optional;
 
 /**
- * Created by monju on 09-Jan-17.
+ * Created by monju on 15-Jan-17.
  */
-public interface UserRoleRepository  {
-    UserRole getUser(final User pUser);
+@Repository
+public interface UserRoleRepository extends JpaRepository<UserRole, Integer> {
+    UserRole getByUser(final User pUser);
 }
